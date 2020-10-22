@@ -1,11 +1,6 @@
 package cqrsos
 
-trait Event {
-
-  val eventType: String
-  val timestamp: String
-  val product: Product
-
-  def process(dataSore: DataStore): DataStore
-
-}
+trait Event
+case class StockAddedEvent(quantity: Int) extends Event
+case class StockSoldEvent(customerId: String, quantity: Int) extends Event
+case class StockNotSoldEvent(customerId: String, quantity: Int) extends Event
