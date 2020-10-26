@@ -1,5 +1,7 @@
 package cqrsos
 
+import java.util.concurrent.{Executors, LinkedBlockingQueue}
+
 object CqrsosApplication {
 
   def main(args: Array[String]): Unit = {
@@ -9,7 +11,11 @@ object CqrsosApplication {
     val stockLevelQueryService = new StockLevelQueryService
     val customerOrdersQueryService = new CustomerOrdersQueryService
 
-    val eventBus = new SynchronousEventBus(Seq(stockLevelQueryService, customerOrdersQueryService))
+    val queryServices = Seq(stockLevelQueryService, customerOrdersQueryService)
+
+//    val eventBus = new SynchronousEventBus(queryServices)
+    val executorService = Executors.newFixedThreadPool(queryServices.length)
+    val eventBus = new AsynchronousEventBus(new LinkedBlockingQueue[Event](), executorService, queryServices)
 
     val commandService= new StockControlCommandService(eventStore, eventBus, stockLevelQueryService)
 
@@ -23,6 +29,8 @@ object CqrsosApplication {
     println(stockLevelQueryService.getStockCount)
     println(customerOrdersQueryService.getCustomerOrders("cust-1"))
     println(customerOrdersQueryService.getCustomerOrders("cust-2"))
+
+    executorService.shutdown()
 
   }
 
