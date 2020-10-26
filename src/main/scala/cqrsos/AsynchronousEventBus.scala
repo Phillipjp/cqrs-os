@@ -7,8 +7,8 @@ class AsynchronousEventBus(queue: LinkedBlockingQueue[Event], executorService: E
 
   override def sendEvent(event: Event): Unit = {
 
-    queryServices.foreach(_ => executorService.execute( new Producer(queue, event)))
-    queryServices.map(qs => new Consumer(queue, qs)).foreach( consumer => executorService.execute(consumer))
+    queryServices.foreach( _ => executorService.execute( new Producer(queue, event)))
+    queryServices.foreach( qs => executorService.execute(new Consumer(queue, qs)))
 
   }
 }
