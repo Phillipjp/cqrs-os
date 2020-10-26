@@ -1,15 +1,18 @@
 package cqrsos
 
+import java.time.LocalDateTime
+
 class StockControlCommandService(eventStore: EventStore, eventBus: EventBus, stockLevelQueryService: StockLevelQueryService) extends CommandService{
   override def process(command: Command): Unit = {
+    val now = LocalDateTime.now()
     val event = command match {
-      case c: AddStockCommand => StockAddedEvent(c.quantity)
+      case c: AddStockCommand => StockAddedEvent(now, c.quantity)
       case c: SellStockCommand =>
         if(stockLevelQueryService.getStockCount >= c.quantity){
-          StockSoldEvent(c.customerId, c.quantity)
+          StockSoldEvent(now, c.customerId, c.quantity)
         }
         else{
-          StockNotSoldEvent(c.customerId, c.quantity)
+          StockNotSoldEvent(now, c.customerId, c.quantity)
         }
 
     }
