@@ -14,8 +14,7 @@ object CqrsosApplication {
     val queryServices = Seq(stockLevelQueryService, customerOrdersQueryService)
 
 //    val eventBus = new SynchronousEventBus(queryServices)
-    val executorService = Executors.newFixedThreadPool(queryServices.length)
-    val eventBus = new AsynchronousEventBus(new LinkedBlockingQueue[Event](), executorService, queryServices)
+    val eventBus = new AsynchronousEventBus(queryServices, new LinkedBlockingQueue[Event]())
 
     val commandService= new StockControlCommandService(eventStore, eventBus, stockLevelQueryService)
 
@@ -29,8 +28,6 @@ object CqrsosApplication {
     println(stockLevelQueryService.getStockCount)
     println(customerOrdersQueryService.getCustomerOrders("cust-1"))
     println(customerOrdersQueryService.getCustomerOrders("cust-2"))
-
-    executorService.shutdown()
 
   }
 
