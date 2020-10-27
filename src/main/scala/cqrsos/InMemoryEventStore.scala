@@ -12,4 +12,5 @@ class InMemoryEventStore() extends EventStore{
     eventLog.append(event)
   }
 
+  override def getEventLog: ListBuffer[Event] = eventLog
 }

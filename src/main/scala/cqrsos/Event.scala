@@ -1,5 +1,7 @@
 package cqrsos
-trait Event
-case class StockAddedEvent(quantity: Int) extends Event
-case class StockSoldEvent(customerId: String, quantity: Int) extends Event
-case class StockNotSoldEvent(customerId: String, quantity: Int) extends Event
+trait Event{
+  val eventNumber: Int
+}
+case class StockAddedEvent(eventNumber: Int, quantity: Int) extends Event
+case class StockSoldEvent(eventNumber: Int, customerId: String, quantity: Int) extends Event
+case class StockNotSoldEvent(eventNumber: Int, customerId: String, quantity: Int) extends Event
