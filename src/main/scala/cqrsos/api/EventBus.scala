@@ -3,7 +3,9 @@ package cqrsos.api
 import cqrsos.Event
 
 trait EventBus {
-  val queryServices: Seq[QueryService]
+  def subscribe(queryService: QueryService): Unit
 
   def sendEvent(event: Event): Unit
+
+  def shutdown(): Unit
 }

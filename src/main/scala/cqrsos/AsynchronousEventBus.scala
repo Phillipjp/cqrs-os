@@ -4,22 +4,37 @@ import java.util.concurrent.{ExecutorService, Executors, LinkedBlockingQueue, Ti
 
 import cqrsos.api.{EventBus, QueryService}
 
+import scala.collection.mutable.ListBuffer
 
-class AsynchronousEventBus(val queryServices: Seq[QueryService]) extends EventBus {
+
+class AsynchronousEventBus(nThreads: Int, timeout: Int) extends EventBus {
+
+  private val queryServices: ListBuffer[QueryService] = new ListBuffer[QueryService]()
+
+  private val executorService: ExecutorService = Executors.newFixedThreadPool(nThreads)
 
   private val queue: LinkedBlockingQueue[Event] = new LinkedBlockingQueue()
 
   override def sendEvent(event: Event): Unit = {
 
-    val executorService: ExecutorService = Executors.newFixedThreadPool(queryServices.length)
-    queryServices.foreach(_ => executorService.execute(new Producer(queue, event)))
-    queryServices.foreach(qs => executorService.execute(new Consumer(queue, qs)))
-    executorService.shutdown()
-    if (!executorService.awaitTermination(10, TimeUnit.SECONDS)) {
-      val droppedTasks = executorService.shutdownNow()
-      println(s"Executor shutdown before completion. ${droppedTasks.size()} tasks incomplete.")
-    }
+    queryServices.foreach(_ => queue.put(event))
+    queryServices.foreach(qs => executorService.execute(new Runnable {
+      override def run(): Unit = {
+        qs.processEvent(event)
+      }
+    }))
 
   }
 
+  override def subscribe(queryService: QueryService): Unit = {
+    queryServices.append(queryService)
+  }
+
+  override def shutdown(): Unit = {
+    executorService.shutdown()
+    if (!executorService.awaitTermination(timeout, TimeUnit.SECONDS)) {
+      val droppedTasks = executorService.shutdownNow()
+      println(s"Executor shutdown before completion. ${droppedTasks.size()} tasks incomplete.")
+    }
+  }
 }
