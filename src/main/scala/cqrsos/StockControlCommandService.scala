@@ -1,7 +1,5 @@
 package cqrsos
 
-import java.time.LocalDateTime
-
 import cqrsos.api.{CommandService, EventBus, EventStore}
 
 class StockControlCommandService(eventStore: EventStore, eventBus: EventBus, stockLevelEventHandler: StockLevelEventHandler) extends CommandService{

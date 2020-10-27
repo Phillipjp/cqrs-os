@@ -1,7 +1,5 @@
 package cqrsos
 
-import java.util.concurrent.{Executors, LinkedBlockingQueue}
-
 object CqrsosApplication {
 
   def main(args: Array[String]): Unit = {
