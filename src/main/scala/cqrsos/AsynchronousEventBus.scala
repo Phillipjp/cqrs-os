@@ -2,6 +2,8 @@ package cqrsos
 
 import java.util.concurrent.{ExecutorService, Executors, LinkedBlockingQueue, TimeUnit}
 
+import cqrsos.api.{EventBus, QueryService}
+
 
 class AsynchronousEventBus(val queryServices: Seq[QueryService]) extends EventBus {
 

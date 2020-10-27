@@ -1,5 +1,7 @@
 package cqrsos
 
+import cqrsos.api.QueryService
+
 import scala.collection.mutable
 
 class CustomerOrdersQueryService extends QueryService {

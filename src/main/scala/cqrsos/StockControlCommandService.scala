@@ -2,6 +2,8 @@ package cqrsos
 
 import java.time.LocalDateTime
 
+import cqrsos.api.{CommandService, EventBus, EventStore}
+
 class StockControlCommandService(eventStore: EventStore, eventBus: EventBus, stockLevelQueryService: StockLevelQueryService) extends CommandService{
   override def process(command: Command): Unit = {
     val now = LocalDateTime.now()

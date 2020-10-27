@@ -1,5 +1,7 @@
 package cqrsos
 
+import cqrsos.api.QueryService
+
 class StockLevelQueryService() extends QueryService{
 
   private var stockCount: Int = 0

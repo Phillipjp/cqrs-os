@@ -1,5 +1,7 @@
 package cqrsos
 
+import cqrsos.api.EventStore
+
 import scala.collection.mutable.ListBuffer
 
 class InMemoryEventStore() extends EventStore{
