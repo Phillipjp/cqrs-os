@@ -14,7 +14,7 @@ object CqrsosApplication {
     val queryServices = Seq(stockLevelQueryService, customerOrdersQueryService)
 
 //    val eventBus = new SynchronousEventBus(queryServices)
-    val eventBus = new AsynchronousEventBus(queryServices, new LinkedBlockingQueue[Event]())
+    val eventBus = new AsynchronousEventBus(queryServices)
 
     val commandService= new StockControlCommandService(eventStore, eventBus, stockLevelQueryService)
 
