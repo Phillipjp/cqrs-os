@@ -6,7 +6,7 @@ class StockLevelEventHandler() extends EventHandler{
 
   private var stockCount: Int = 0
 
-  override protected var lastProcessedEvent: Int = 0
+  private var lastProcessedEvent: Int = 0
 
   override def handleEvent(event: Event): Unit = {
     event match {

@@ -8,7 +8,7 @@ class CustomerOrdersEventHandler extends EventHandler {
 
   private val customerOrders: mutable.Map[String, Seq[Order]] = mutable.Map[String, Seq[Order]]()
 
-  override protected var lastProcessedEvent: Int = 0
+  private var lastProcessedEvent: Int = 0
 
   override def handleEvent(event: Event): Unit = {
     event match {
