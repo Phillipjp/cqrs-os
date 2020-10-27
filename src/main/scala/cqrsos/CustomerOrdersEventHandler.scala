@@ -1,14 +1,14 @@
 package cqrsos
 
-import cqrsos.api.QueryService
+import cqrsos.api.EventHandler
 
 import scala.collection.mutable
 
-class CustomerOrdersQueryService extends QueryService {
+class CustomerOrdersEventHandler extends EventHandler {
 
   private val customerOrders: mutable.Map[String, Seq[Order]] = mutable.Map[String, Seq[Order]]()
 
-  override def processEvent(event: Event): Unit = {
+  override def handleEvent(event: Event): Unit = {
     event match {
       case _: StockAddedEvent =>
       case e: StockSoldEvent => updateCustomerOrders(e.customerId, e.quantity, sold = true)

@@ -1,11 +1,11 @@
 package cqrsos
 
-import cqrsos.api.QueryService
+import cqrsos.api.EventHandler
 
-class StockLevelQueryService() extends QueryService{
+class StockLevelEventHandler() extends EventHandler{
 
   private var stockCount: Int = 0
-  override def processEvent(event: Event): Unit = {
+  override def handleEvent(event: Event): Unit = {
     event match {
       case e: StockAddedEvent => stockCount += e.quantity
       case e: StockSoldEvent => stockCount -= e.quantity

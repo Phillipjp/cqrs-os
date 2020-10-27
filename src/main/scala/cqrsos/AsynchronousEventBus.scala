@@ -2,14 +2,14 @@ package cqrsos
 
 import java.util.concurrent.{ExecutorService, Executors, LinkedBlockingQueue, TimeUnit}
 
-import cqrsos.api.{EventBus, QueryService}
+import cqrsos.api.{EventBus, EventHandler}
 
 import scala.collection.mutable.ListBuffer
 
 
 class AsynchronousEventBus(nThreads: Int, timeout: Int) extends EventBus {
 
-  private val queryServices: ListBuffer[QueryService] = new ListBuffer[QueryService]()
+  private val eventHandlers: ListBuffer[EventHandler] = new ListBuffer[EventHandler]()
 
   private val executorService: ExecutorService = Executors.newFixedThreadPool(nThreads)
 
@@ -17,17 +17,17 @@ class AsynchronousEventBus(nThreads: Int, timeout: Int) extends EventBus {
 
   override def sendEvent(event: Event): Unit = {
 
-    queryServices.foreach(_ => queue.put(event))
-    queryServices.foreach(qs => executorService.execute(new Runnable {
+    eventHandlers.foreach(_ => queue.put(event))
+    eventHandlers.foreach(eventHandler => executorService.execute(new Runnable {
       override def run(): Unit = {
-        qs.processEvent(event)
+        eventHandler.handleEvent(event)
       }
     }))
 
   }
 
-  override def subscribe(queryService: QueryService): Unit = {
-    queryServices.append(queryService)
+  override def subscribe(eventHandler: EventHandler): Unit = {
+    eventHandlers.append(eventHandler)
   }
 
   override def shutdown(): Unit = {

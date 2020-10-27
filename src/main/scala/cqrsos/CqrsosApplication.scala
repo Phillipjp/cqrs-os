@@ -8,17 +8,15 @@ object CqrsosApplication {
 
     val eventStore = new InMemoryEventStore()
 
-    val stockLevelQueryService = new StockLevelQueryService
-    val customerOrdersQueryService = new CustomerOrdersQueryService
-
-    val queryServices = Seq(stockLevelQueryService, customerOrdersQueryService)
+    val stockLevelEventHandler = new StockLevelEventHandler
+    val customerOrdersEventHandler = new CustomerOrdersEventHandler
 
 //    val eventBus = new SynchronousEventBus()
     val eventBus = new AsynchronousEventBus(2, 10)
-    eventBus.subscribe(stockLevelQueryService)
-    eventBus.subscribe(customerOrdersQueryService)
+    eventBus.subscribe(stockLevelEventHandler)
+    eventBus.subscribe(customerOrdersEventHandler)
 
-    val commandService= new StockControlCommandService(eventStore, eventBus, stockLevelQueryService)
+    val commandService= new StockControlCommandService(eventStore, eventBus, stockLevelEventHandler)
 
     commandService.process(AddStockCommand(1))
     commandService.process(AddStockCommand(1))
@@ -29,9 +27,9 @@ object CqrsosApplication {
 
     eventBus.shutdown()
 
-    println(stockLevelQueryService.getStockCount)
-    println(customerOrdersQueryService.getCustomerOrders("cust-1"))
-    println(customerOrdersQueryService.getCustomerOrders("cust-2"))
+    println(stockLevelEventHandler.getStockCount)
+    println(customerOrdersEventHandler.getCustomerOrders("cust-1"))
+    println(customerOrdersEventHandler.getCustomerOrders("cust-2"))
 
   }
 
